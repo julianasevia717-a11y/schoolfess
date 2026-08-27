@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schoolfess</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f7f3ff;
+      color: #302052;
+    }
+
+    /* NAVBAR */
+    nav {
+      height: 75px;
+      background: white;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      gap: 30px;
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: bold;
+      color: #6336b8;
+      min-width: 180px;
+    }
+
+    .search {
+      flex: 1;
+      max-width: 500px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 13px 18px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      outline: none;
+    }
+
+    .send-btn {
+      background: #6b3fc1;
+      color: white;
+      border: none;
+      padding: 13px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* LAYOUT */
+    .container {
+      max-width: 1250px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 230px 1fr 260px;
+      gap: 25px;
+    }
+
+    /* SIDEBAR */
+    .sidebar,
+    .rightbar {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      height: fit-content;
+      box-shadow: 0 3px 15px rgba(0,0,0,.04);
+    }
+
+    .sidebar h2 {
+      color: #6336b8;
+      margin-bottom: 10px;
+    }
+
+    .sidebar p {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 20px;
+    }
+
+    .menu {
+      padding: 12px;
+      border-radius: 10px;
+      margin: 5px 0;
+      cursor: pointer;
+    }
+
+    .menu:hover {
+      background: #f0e8ff;
+      color: #6336b8;
+    }
+
+    .rules {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    /* FEED */
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .feed-header h1 {
+      font-size: 25px;
+    }
+
+    .sort {
+      padding: 9px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .post {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 15px rgba(0,0,0,.04);
+    }
+
+    .post-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      background: #eadfff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .username {
+      font-weight: bold;
+    }
+
+    .info {
+      font-size: 12px;
+      color: #888;
+      margin-top: 3px;
+    }
+
+    .category {
+      margin-left: auto;
+      background: #eee4ff;
+      color: #6336b8;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .message {
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .actions {
+      border-top: 1px solid #eee;
+      padding-top: 12px;
+      display: flex;
+      gap: 20px;
+      color: #777;
+    }
+
+    .actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #777;
+    }
+
+    .actions button:hover {
+      color: #6336b8;
+    }
+
+    /* RIGHT BAR */
+    .rightbar h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #6336b8;
+    }
+
+    .category-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .popular {
+      margin-top: 25px;
+    }
+
+    .popular p {
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .modal-box {
+      background: white;
+      width: 90%;
+      max-width: 500px;
+      padding: 25px;
+      border-radius: 18px;
+    }
+
+    .modal-box h2 {
+      margin-bottom: 20px;
+      color: #6336b8;
+    }
+
+    .modal-box select,
+    .modal-box textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .modal-box textarea {
+      height: 130px;
+      resize: none;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .cancel {
+      padding: 11px 18px;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar,
+      .rightbar {
+        display: none;
+      }
+
+      nav {
+        gap: 10px;
+      }
+
+      .logo {
+        min-width: auto;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .search {
+        display: none;
+      }
+
+      .logo {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo">💬 SCHOOLFESS</div>
+
+    <div class="search">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Cari menfess..."
+        onkeyup="searchPost()"
+      >
+    </div>
+
+    <button class="send-btn" onclick="openModal()">
+      + Kirim Menfess
+    </button>
+  </nav>
+
+
+  <!-- CONTENT -->
+  <div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <h2>Schoolfess</h2>
+      <p>Tempat aman untuk berbagi pesan secara anonim.</p>
+
+      <div class="menu">🏠 Beranda</div>
+      <div class="menu">▦ Kategori</div>
+      <div class="menu">🔥 Menfess Populer</div>
+      <div class="menu">🛡️ Aturan</div>
+
+      <div class="rules">
+        <b>Aturan:</b><br>
+        ✓ Sopan dan saling menghargai<br>
+        ✓ Tidak mengandung SARA<br>
+        ✓ Tidak bullying<br>
+        ✓ Tidak menyebarkan data pribadi
+      </div>
+    </aside>
+
+
+    <!-- FEED -->
+    <main>
+
+      <div class="feed-header">
+        <h1>Semua Menfess</h1>
+
+        <select class="sort">
+          <option>Terbaru</option>
+          <option>Terpopuler</option>
+        </select>
+      </div>
+
+      <div id="postContainer">
+
+        <!-- POST 1 -->
+        <div class="post">
+          <div class="post-top">
+            <div class="avatar">💜</div>
+
+            <div>
+              <div class="username">Anonymous</div>
+              <div class="info">XI-5 · 13:24</div>
+            </div>
+
+            <span class="category">Appreciation</span>
+          </div>
+
+          <div class="message">
+            Semangat buat yang lagi capek sama tugas minggu ini.
+            Kita semua survive bareng-bareng jir.
+          </div>
+
+          <div class="actions">
+            <button onclick="like(this)">♡ <span>24</span></button>
+            <button>💬 5</button>
+            <button>↗ Bagikan</button>
+          </div>
+        </div>
+
+
+        <!-- POST 2 -->
+        <div class="post">
+          <div class="post-top">
+            <div class="avatar">📢</div>
+
+            <div>
+              <div class="username">Anonymous</div>
+              <div class="info">X-2 · 12:11</div>
+            </div>
+
+            <span class="category">Aspirasi</span>
+          </div>
+
+          <div class="message">
+            Ada yang setuju nggak kalau kantin sekolah lebih banyak
+            menu sehat tapi tetap murah?
+          </div>
+
+          <div class="actions">
+            <button onclick="like(this)">♡ <span>17</span></button>
+            <button>💬 8</button>
+            <button>↗ Bagikan</button>
+          </div>
+        </div>
+
+
+        <!-- POST 3 -->
+        <div class="post">
+          <div class="post-top">
+            <div class="avatar">💌</div>
+
+            <div>
+              <div class="username">Anonymous</div>
+              <div class="info">XI-1 · 11:03</div>
+            </div>
+
+            <span class="category">Confession</span>
+          </div>
+
+          <div class="message">
+            Pengen bilang makasih ke seseorang yang selalu bantuin
+            aku saat lagi susah. Kamu baik banget.
+          </div>
+
+          <div class="actions">
+            <button onclick="like(this)">♡ <span>31</span></button>
+            <button>💬 6</button>
+            <button>↗ Bagikan</button>
+          </div>
+        </div>
+
+
+        <!-- POST 4 -->
+        <div class="post">
+          <div class="post-top">
+            <div class="avatar">😊</div>
+
+            <div>
+              <div class="username">Anonymous</div>
+              <div class="info">XII-3 · 10:20</div>
+            </div>
+
+            <span class="category">Random</span>
+          </div>
+
+          <div class="message">
+            Baru nyadar liburan tinggal 2 minggu lagi.
+            Mau liburan tapi tugas numpuk. Relate?
+          </div>
+
+          <div class="actions">
+            <button onclick="like(this)">♡ <span>20</span></button>
+            <button>💬 3</button>
+            <button>↗ Bagikan</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+
+    <!-- RIGHT BAR -->
+    <aside class="rightbar">
+
+      <h2>Kategori</h2>
+
+      <div class="category-item">
+        <span>▦ Semua</span>
+        <span>128</span>
+      </div>
+
+      <div class="category-item">
+        <span>📢 Aspirasi</span>
+        <span>34</span>
+      </div>
+
+      <div class="category-item">
+        <span>💜 Appreciation</span>
+        <span>28</span>
+      </div>
+
+      <div class="category-item">
+        <span>💌 Confession</span>
+        <span>24</span>
+      </div>
+
+      <div class="category-item">
+        <span>ℹ️ Info Sekolah</span>
+        <span>22</span>
+      </div>
+
+      <div class="category-item">
+        <span>😊 Random</span>
+        <span>20</span>
+      </div>
+
+
+      <div class="popular">
+        <h2>🔥 Menfess Populer</h2>
+
+        <p>
+          Kalian juga ngerasa tugas kelompok di sekolah
+          terlalu banyak nggak sih?
+          <br><br>❤️ 52
+        </p>
+
+        <p>
+          Terima kasih buat semua guru yang selalu sabar
+          ngajarin kita.
+          <br><br>❤️ 45
+        </p>
+
+        <p>
+          Saran dong, kegiatan apa yang seru buat class meeting?
+          <br><br>❤️ 38
+        </p>
+      </div>
+
+    </aside>
+
+  </div>
+
+
+  <!-- MODAL KIRIM MENFESS -->
+  <div class="modal" id="modal">
+
+    <div class="modal-box">
+
+      <h2>💬 Kirim Menfess</h2>
+
+      <select id="categoryInput">
+        <option value="Aspirasi">Aspirasi</option>
+        <option value="Appreciation">Appreciation</option>
+        <option value="Confession">Confession</option>
+        <option value="Info Sekolah">Info Sekolah</option>
+        <option value="Random">Random</option>
+      </select>
+
+      <textarea
+        id="messageInput"
+        placeholder="Tulis pesan kamu di sini..."
+      ></textarea>
+
+      <p style="font-size:12px;color:#777;margin-bottom:15px;">
+        Pesan akan diperiksa admin sebelum ditampilkan.
+      </p>
+
+      <div class="modal-buttons">
+        <button class="cancel" onclick="closeModal()">
+          Batal
+        </button>
+
+        <button class="send-btn" onclick="sendPost()">
+          Kirim
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    /* BUKA MODAL */
+    function openModal() {
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    /* TUTUP MODAL */
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+
+    /* KIRIM MENFESS */
+    function sendPost() {
+
+      const message =
+        document.getElementById("messageInput").value;
+
+      const category =
+        document.getElementById("categoryInput").value;
+
+      if (message.trim() === "") {
+        alert("Pesannya jangan kosong lah jir.");
+        return;
+      }
+
+      const postContainer =
+        document.getElementById("postContainer");
+
+      const newPost = document.createElement("div");
+
+      newPost.className = "post";
+
+      newPost.innerHTML = `
+        <div class="post-top">
+
+          <div class="avatar">💬</div>
+
+          <div>
+            <div class="username">Anonymous</div>
+            <div class="info">Baru saja</div>
+          </div>
+
+          <span class="category">
+            ${category}
+          </span>
+
+        </div>
+
+        <div class="message">
+          ${message}
+        </div>
+
+        <div class="actions">
+
+          <button onclick="like(this)">
+            ♡ <span>0</span>
+          </button>
+
+          <button>
+            💬 0
+          </button>
+
+          <button>
+            ↗ Bagikan
+          </button>
+
+        </div>
+      `;
+
+      postContainer.prepend(newPost);
+
+      document.getElementById("messageInput").value = "";
+
+      closeModal();
+
+      alert("Menfess berhasil dikirim dan menunggu moderasi!");
+    }
+
+
+    /* LIKE */
+    function like(button) {
+
+      const number =
+        button.querySelector("span");
+
+      let count =
+        parseInt(number.innerText);
+
+      count++;
+
+      number.innerText = count;
+
+      button.innerHTML =
+        "♥ <span>" + count + "</span>";
+    }
+
+
+    /* SEARCH */
+    function searchPost() {
+
+      const keyword =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+      const posts =
+        document.querySelectorAll(".post");
+
+      posts.forEach(post => {
+
+        const text =
+          post.innerText.toLowerCase();
+
+        if (text.includes(keyword)) {
+          post.style.display = "block";
+        } else {
+          post.style.display = "none";
+        }
+
+      });
+
+    }
+
+  </script>
+
+</body>
+</html>
